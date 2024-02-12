@@ -1,0 +1,33 @@
+- name: Download btop files
+  become: false
+  ansible.builtin.get_url:
+    url: https://github.com/aristocratos/btop/releases/download/v{{ btop_version }}/btop-{{btop_arch_table[ansible_architecture].arch}}-{{ ansible_system | lower }}-musl.tbz
+    dest: /tmp/
+    mode: "0755"
+  delegate_to: localhost
+
+- name: Create temporary directory
+  become: false
+  ansible.builtin.file:
+    path: /tmp/btop_{{ btop_version }}_{{ btop_arch_table[ansible_architecture].arch }}
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+
+- name: Unarchive btop files
+  become: false
+  ansible.builtin.unarchive:
+    src: /tmp/btop-{{btop_arch_table[ansible_architecture].arch}}-{{ ansible_system | lower }}-musl.tbz
+    remote_src: true
+    dest: /tmp/btop_{{ btop_version }}_{{ btop_arch_table[ansible_architecture].arch }}/
+    creates: /tmp/btop_{{ btop_version }}_{{ btop_arch_table[ansible_architecture].arch }}/btop/bin/btop
+  delegate_to: localhost
+  check_mode: false
+
+- name: Propagate btop binary
+  ansible.builtin.copy:
+    src: /tmp/btop_{{ btop_version }}_{{ btop_arch_table[ansible_architecture].arch }}/btop/bin/btop
+    dest: /usr/local/bin/btop
+    mode: "0755"
+    owner: root
+    group: root

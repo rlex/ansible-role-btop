@@ -1,0 +1,5 @@
+btop_arch_table:
+  aarch64:
+    arch: aarch64
+  x86_64:
+    arch: x86_64

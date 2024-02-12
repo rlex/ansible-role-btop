@@ -1,0 +1,7 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Run btop binary
+      ansible.builtin.shell: |
+        btop --version
